@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Cinderella | 2026</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <style>
+        :root {
+            --gold: #d4af37;
+            --glass: rgba(255, 255, 255, 0.1);
+            --bg: #050508;
+        }
+
+        body {
+            margin: 0; background: var(--bg); color: white;
+            font-family: 'Playfair Display', serif; overflow-x: hidden;
+        }
+
+        /* 1. MAGIC DUST EFFECT */
+        #canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
+
+        /* 2. THE CANDLE ENTRANCE */
+        #intro-overlay {
+            position: fixed; inset: 0; background: black;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 1000; transition: transform 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        .candle {
+            width: 50px; height: 150px; background: linear-gradient(white, #ffd700);
+            border-radius: 8px; cursor: pointer; position: relative;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        .flame {
+            width: 20px; height: 35px; background: radial-gradient(#fff, #ffa500, #ff4500);
+            border-radius: 50% 50% 20% 20%; position: absolute; top: -40px; left: 15px;
+            display: none; filter: blur(1px); animation: pulse 0.1s infinite alternate;
+        }
+
+        /* 3. HERO SECTION */
+        .hero {
+            height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; position: relative;
+            z-index: 2; text-align: center;
+        }
+
+        .hero h1 { font-size: 5rem; color: var(--gold); margin: 0; }
+
+        /* 4. PHOTO GALLERY (THE MEMORIES) */
+        .gallery-section { padding: 100px 5%; z-index: 2; position: relative; }
+
+        .photo-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px; perspective: 1000px;
+        }
+
+        .card {
+            background: var(--glass); backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 15px; border-radius: 15px;
+            transform-style: preserve-3d; transition: 0.5s;
+        }
+
+        .card img { width: 100%; border-radius: 10px; display: block; }
+
+        .card:hover {
+            transform: scale(1.05) rotateY(10deg);
+            border-color: var(--gold);
+        }
+
+        @keyframes pulse { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.2); opacity: 1; } }
+
+        /* SMOOTH SCROLL STUFF */
+        .reveal { opacity: 0; transform: translateY(50px); }
+    </style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div id="intro-overlay">
+    <h2 style="color: var(--gold); margin-bottom: 50px;">Touch the flame to start 2026...</h2>
+    <div class="candle" onclick="startFairytale()">
+        <div class="flame" id="flame"></div>
+    </div>
+</div>
+
+<div id="main-web">
+    <section class="hero">
+        <h1 class="animate__animated animate__fadeInDown">My Cinderella</h1>
+        <div style="font-size: 1.5rem; height: 30px;"><span id="typed"></span></div>
+    </section>
+
+    <section class="gallery-section">
+        <h2 style="text-align: center; color: var(--gold); font-size: 3rem; margin-bottom: 50px;">Memories of 2025</h2>
+        <div class="photo-grid">
+            <div class="card reveal"><img src="PHOTO_URL_HERE"><p>The first time I saw you...</p></div>
+            <div class="card reveal"><img src="PHOTO_URL_HERE"><p>That beautiful 2025 summer.</p></div>
+            <div class="card reveal"><img src="PHOTO_URL_HERE"><p>Your smile is my home.</p></div>
+            <div class="card reveal"><img src="PHOTO_URL_HERE"><p>Forever to go.</p></div>
+        </div>
+    </section>
+
+    <section class="hero" style="background: rgba(0,0,0,0.5);">
+        <h2 style="color: var(--gold);">Happy New Year 2026</h2>
+        <p style="max-width: 600px; font-size: 1.2rem;">I promise to make every day of this year as magical as a fairytale for you. You are my forever.</p>
+    </section>
+</div>
+
+<script>
+    // Magic Dust Particles
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let particles = [];
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2 + 0.1;
+            this.speedX = Math.random() * 1 - 0.5;
+            this.speedY = Math.random() * 1 - 0.5;
+        }
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.size > 0.2) this.size -= 0.001;
+        }
+        draw() {
+            ctx.fillStyle = 'rgba(212, 175, 55, 0.8)';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function handleParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
+        }
+    }
+
+    function init() {
+        for (let i = 0; i < 100; i++) { particles.push(new Particle()); }
+    }
+    init();
+    setInterval(handleParticles, 30);
+
+    // Candle Interaction
+    function startFairytale() {
+        document.getElementById('flame').style.display = 'block';
+        gsap.to("#intro-overlay", {
+            duration: 2,
+            y: "-100%",
+            delay: 1,
+            ease: "expo.inOut",
+            onComplete: () => {
+                // Start Typed.js
+                new Typed('#typed', {
+                    strings: ['You made 2025 perfect.', 'You are my dream come true.', 'I love you more than words.', 'Happy New Year, Beauty.'],
+                    typeSpeed: 50,
+                    backSpeed: 30,
+                    loop: true
+                });
+
+                // GSAP Scroll Reveal
+                gsap.utils.toArray(".reveal").forEach(el => {
+                    gsap.to(el, {
+                        scrollTrigger: el,
+                        opacity: 1,
+                        y: 0,
+                        duration: 1.5,
+                        ease: "power4.out"
+                    });
+                });
+            }
+        });
+    }
+
+    // Register GSAP Plugin
+    gsap.registerPlugin(ScrollTrigger);
+</script>
+
+</body>
+</html>
